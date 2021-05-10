@@ -30,6 +30,6 @@ lsl = mapping_data.merge(survey,
 
 print(lsl['_merge'].value_counts())
 
-lsl.to_csv('lead_service_lines.csv',index=False)
+lsl.to_csv('lead_service_lines.csv')
 #right only = 6 for outer join
 #figure out what data is different between joined data and original data

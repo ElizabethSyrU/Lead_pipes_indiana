@@ -21,7 +21,7 @@ rename = {'Responded to State Survey?':'respondent',
           'System Name':'sys_name',#do I need this? different case but same as column water system
           'Total Number of Service Connections':'tot_num_serv_connects',#is this the same as tot_num_serv_connects_sdwis?
           'Total Number of Service Lines with Lead Portions':'tot_num_sl_w_lead',#box and whisker or histogram
-          'No Lead Portion - Number of Service Connection':'no_lead_serv_connects',#do some kind of ratio and match it to the lat/long and map with pie charts?
+          'No Lead Portion - Number of Service Connections':'no_lead_serv_connects',#do some kind of ratio and match it to the lat/long and map with pie charts?
           'Service Line Material is Unknown - Number of Service Connection':'unk_mat_serv_connects',
           'Lead Gooseneck Only - Number of Service Connections':'lead_gooseneck_serv_connects',#what is the gooseneck
           'Entire Service Line is Lead - Number of Service Connections':'lead_serv_line_serv_connects',
@@ -75,19 +75,29 @@ for c in lsl.columns:
 #%%
 
 owner_agg_watermain = lsl['lead_btwn_watermain_shutoff'].groupby(lsl['owner_btwn_watermain_shutoff']).sum()#this did work but now it's funky, not sure what's up
-owner_agg_house = lsl['lead_btwn_shutoff_house'].groupby(lsl['lead_btwn_shutoff_house']).sum()
+owner_agg_house = lsl['lead_btwn_shutoff_house'].groupby(lsl['owner_btwn_shutoff_house']).sum()
 
-#to do: % columns as in notebook
 
-#test = lsl.iloc[:,-9:-1]
 
-#for c in lsl.columns[13:22]:
-    #create a dictionary? you've spent more time figuring it out than it would take to do it manually
-    #what I'm trying to do here: print/save somehow (maybe make variables) of number of pipes for each entry in the column (ex: number of pipes E, R, or E and R)
 
-#do similar thing for E/R and confidence, can I use a for loop somehow?
+
+
+
+
+
+
+
+
+
+
 
 #drop SDWIS PWS ID, better done in merge
+
+
+
+
+
+
 
 
 #next step: response for rate for utilities vs response as % of total number of service connections
