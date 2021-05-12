@@ -12,7 +12,7 @@ from shapely.geometry import Point
 #files needed to run this script
 #file outputs from this script
 
-lsl = pd.read_csv('lead_service_lines.csv')
+lsl = pd.read_csv('lsl.csv')
 
 geometry = [Point(xy) for xy in zip(lsl['long'],lsl['lat'])]
 
@@ -20,7 +20,7 @@ crs = {'init':'epsg:2965'}
 
 lsl_geo = geopandas.GeoDataFrame(lsl,crs=crs,geometry=geometry)
 
-lsl_geo.to_file('joined.gpkg',layer='IndianaPipes',drive='GPKG')#maybe have a different name
+lsl_geo.to_file('joined.gpkg',layer='IndianaPipes',driver='GPKG')#maybe have a different name
 
 #%%
 
@@ -34,22 +34,27 @@ counties = counties.query('STATEFP == "18"')
 #counties = counties['COUNTYFP','GEOID','NAME','INTPTLAT','INTPTLON','geometry']
 #figure out how to drop extra columns in geodataframe
 
-census_data = geopandas.read_file('census_data.csv')
+#census_data = geopandas.read_file('census_data.csv')
 
-counties = counties.merge(census_data,how='left',left_on='COUNTYFP',right_on='county',indicator=True,validate='1:1')
-
-print(counties['_merge'].value_counts())
+#counties = counties.merge(census_data,how='left',left_on='COUNTYFP',right_on='county',indicator=True,validate='1:1')
+#appear to be having trouble merging dataframe onto geodataframe, do this in QGIS?
+#print(counties['_merge'].value_counts())
 #all 92 values should be in the 'both' category
+#drop some columns
 
-#counties = geopandas.GeoDataFrame(counties,crs=crs,geometry=geometry)
+counties = counties.to_crs(epsg='2965')
 
 #counties.to_file('joined.gpkg',layer='counties',drive='GPKG')
 #get this into the geopackage as a layer somehow?
 
 #%%
 
-pipes_by_county = 
-#overlay? join?
+pipes_by_county = geopandas.overlay(counties,lsl_geo,how='contains')
+
+pipes_by_county.to_file('pipes_by_county.gpkg',layer='Lead_Pipes_Census',driver='GPKG')
+
+#read this out to a file and see if you can load it into QGIS
+
 #join with block groups? better for scatter? (would need block group level data in census data api)
 
 #%%

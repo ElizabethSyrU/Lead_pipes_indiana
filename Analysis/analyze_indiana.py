@@ -54,7 +54,7 @@ lsl = lsl.drop('Unnamed: 0',axis='columns') #why is there an extra column?
 
 #%%
 
-select_cols = ['respondent','unk_mat_serv_connects','lead_gooseneck_serv_connects',
+select_cols = ['respondent','pct_lsl','unk_mat_serv_connects','lead_gooseneck_serv_connects',
                'lead_serv_line_serv_connects','lead_btwn_watermain_shutoff',
                'lead_btwn_shutoff_house','owner_btwn_watermain_shutoff','owner_btwn_shutoff_house',
                'e_r_leadportion','e_r_slmat','e_r_lead_gooseneck','e_r_lead_watermain',
@@ -64,13 +64,26 @@ select_cols = ['respondent','unk_mat_serv_connects','lead_gooseneck_serv_connect
                'conf_rec_lead_btw_shutoff_house','conf_rec_tot_num_serv_connects',
                'conf_rec_tot_num_serv_lines_w_lead']
 
+#%%
 
 for c in select_cols:
     print(lsl[c].value_counts())#some of these value counts might be better as lengths, check this (actually, I just want to know how many are not 0, go through hw to figure out how to do that?)
 #this for loop helps establish values and ranges which inform future decisions in analysis
-
+#print(lsl['pct_lsl'].value_counts())
 for c in lsl.columns:
     print(lsl[c].count())#figure out how to print column names along with this, make a dictionary or dataframe and print that (index of dataframe the column names)
+
+#%%
+
+#lsl = lsl['pct_lsl'].to_replace('unknown')
+lsl['pct_lsl_calc'] = (100*lsl['tot_num_sl_w_lead']/lsl['tot_num_serv_connects']).round(2)
+#used these because they are from the same data set (Indiana survey, not EPA survey); also these were integers
+#did this because reported percent is a string and I didn't want to deal with it 
+    #(some numbers, some strings, even the numbers are strings because they include % (fix this in the excel sheet?))
+#reported and calculated percents similar
+#get percent of pipes that are lead
+#check variation in reporting number of pipes from EPA vs Indiana survey
+print(lsl['pct_lsl_calc'])
 
 #%%
 
@@ -78,25 +91,29 @@ owner_agg_watermain = lsl['lead_btwn_watermain_shutoff'].groupby(lsl['owner_btwn
 owner_agg_house = lsl['lead_btwn_shutoff_house'].groupby(lsl['owner_btwn_shutoff_house']).sum()
 
 
+lsl.to_csv('lsl.csv')
+
+#%%
+
+response = lsl.groupby(lsl['respondent'])#now what can I do with this?
+yes = 449 #figure out how to do this in a way that is not 
+#response = lsl['respondent'].query('respondent == "Yes"')
+pct_response = 100 * yes/lsl['respondent'].count()
+print('The percentage of untilities that responded:',pct_response.round(2))
 
 
-
-
-
-
-
-
-
-
-
-
-
+by_response = lsl['tot_num_serv_connects_sdwis'].groupby(lsl['respondent']).sum()
+#total = lsl['tot_num_serv_connects_sdwis'].sum() #TypeError: can only concatenate str (not "int") to str
+num_connections = by_response['Yes'] #/ (by_response['Yes']+by_response['No'])#number too big?
 #drop SDWIS PWS ID, better done in merge
 
 
+#%%
 
-
-
+lsl_layer = lsl[['lat','long','tot_num_serv_connects_sdwis','tot_num_serv_connects',
+                 'tot_num_sl_w_lead','no_lead_serv_connects','unk_mat_serv_connects',
+                 'pct_lsl_calc']]
+lsl_layer.to_csv('lsl_layer.csv')
 
 
 
