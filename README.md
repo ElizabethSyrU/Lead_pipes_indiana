@@ -21,5 +21,21 @@ This project also uses data downloaded from the census API.
 Outputs:
 
 File structure/Order:
+1 merge.py; outputs: lead_service_lines.csv (.csv file of the merged survey data)
+2 analyze_indiana.py; inputs: lead_service_lines.csv; outputs: lsl.csv, lsl_layer.csv
+3 census_data.py; inputs: none; outputs: 
+4 trim_tl.py; inputs: 'tl_2017_us_county.zip'
 
-Other comments:
+Results:
+The number of lead pipes in a county correlates with the level poverty in the county
+and the relationship is likely not linear (take that into account if running a
+regression)
+
+Further analysis:
+
+More granular data (challenge, utilities given as latitude and longitude make it
+difficult to determine the extent )
+
+ownership of pipes
+
+confidence in record or estimate

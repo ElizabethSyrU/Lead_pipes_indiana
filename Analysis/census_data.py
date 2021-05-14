@@ -4,7 +4,9 @@ Created on Sat May  8 15:00:19 2021
 
 @author: Elizabeth
 """
-
+#The purpose of this script is to obtain census data to that will be used to 
+#identify the poverty rate of people most affected by lead in the service pipes
+#
 import pandas as pd
 import requests
 
@@ -13,7 +15,7 @@ api= 'https://api.census.gov/data/2017/acs/acs5'
 #5 year data is more accurate and the pipes have been there for a while so there's no reason to use 1 year data.
 
 var_string = 'NAME,B02001_001E,B06011_001E,B17020_001E,B17020_002E'
-#B02001_002E,B05010_001E,B05010_003E,B06012_001E,B06012_002E' (may use these variables in later anaysis, but cutting them for convenience now)
+#variables retrieved from the census describe later in this script
 for_clause = 'county:*'
 in_clause = 'state:18'
 key_value = '2515f19444d8d046ca99087260217e11d73c37f1'

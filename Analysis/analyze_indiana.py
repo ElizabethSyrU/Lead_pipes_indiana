@@ -5,26 +5,25 @@ Created on Thu May  6 11:43:37 2021
 @author: Elizabeth
 """
 #This script examines some aspects of the Indiana survey data and simplifies the
-#lsl.csv file for further 
+#lsl.csv file so it is easier to use for the purpose of finding the 
 import pandas as pd
 
 lsl = pd.read_csv('lead_service_lines.csv')
+#read in the merged data
 
 rename = {'Responded to State Survey?':'respondent',
-          '# with Lead Service Line':'num_lsl',#want spread, not value counts. do a scatter plot or some other plot
-          '% with Lead Service Line':'pct_lsl',#use to map? Indiana already did that
+          '# with Lead Service Line':'num_lsl',
+          '% with Lead Service Line':'pct_lsl',
           'Data Source':'data_source',
-          'Full Address':'full_addr',#do I actually need this column?
           'Latitude':'lat',
           'Longitude':'long',
-          'SDWIS Total # of Service Connections':'tot_num_serv_connects_sdwis',#scatter with pct lsl or #lsl or both!
-          'SDWIS LCR 90th Percentile Sample (ppm)':'LCR_90thpctile',#not sure what this one means
-          'System Name':'sys_name',#do I need this? different case but same as column water system
-          'Total Number of Service Connections':'tot_num_serv_connects',#is this the same as tot_num_serv_connects_sdwis?
-          'Total Number of Service Lines with Lead Portions':'tot_num_sl_w_lead',#box and whisker or histogram
-          'No Lead Portion - Number of Service Connections':'no_lead_serv_connects',#do some kind of ratio and match it to the lat/long and map with pie charts?
+          'SDWIS Total # of Service Connections':'tot_num_serv_connects_sdwis',
+          'SDWIS LCR 90th Percentile Sample (ppm)':'LCR_90thpctile',
+          'Total Number of Service Connections':'tot_num_serv_connects',
+          'Total Number of Service Lines with Lead Portions':'tot_num_sl_w_lead',
+          'No Lead Portion - Number of Service Connections':'no_lead_serv_connects',
           'Service Line Material is Unknown - Number of Service Connection':'unk_mat_serv_connects',
-          'Lead Gooseneck Only - Number of Service Connections':'lead_gooseneck_serv_connects',#what is the gooseneck
+          'Lead Gooseneck Only - Number of Service Connections':'lead_gooseneck_serv_connects',
           'Entire Service Line is Lead - Number of Service Connections':'lead_serv_line_serv_connects',
           'Lead only from Water Main to Property line, Curb or Shut-Off':'lead_btwn_watermain_shutoff',
           'Lead Only from the External Shut-off valve to home':'lead_btwn_shutoff_house',
@@ -51,8 +50,6 @@ lsl = lsl.rename(rename,axis='columns')# makes columns easier to work with
 
 lsl = lsl.drop('Unnamed: 0',axis='columns') #why is there an extra column?
 
-#lsl.apply(pd.Series.value_counts) prints all value counts for all columns, is there a way to select certain columns?
-
 #%%
 
 select_cols = ['respondent','pct_lsl','unk_mat_serv_connects','lead_gooseneck_serv_connects',
@@ -64,35 +61,48 @@ select_cols = ['respondent','pct_lsl','unk_mat_serv_connects','lead_gooseneck_se
                'conf_rec_lead_servline','conf_rec_lead_btwn_watermain_shutoff',
                'conf_rec_lead_btw_shutoff_house','conf_rec_tot_num_serv_connects',
                'conf_rec_tot_num_serv_lines_w_lead']
+#selects columns of interest
 
 #%%
 
 for c in select_cols:
-    print(lsl[c].value_counts())#some of these value counts might be better as lengths, check this (actually, I just want to know how many are not 0, go through hw to figure out how to do that?)
+    print(lsl[c].value_counts())
 #this for loop helps establish values and ranges which inform future decisions in analysis
-#print(lsl['pct_lsl'].value_counts())
-for c in lsl.columns:
-    print(lsl[c].count())#figure out how to print column names along with this, make a dictionary or dataframe and print that (index of dataframe the column names)
+#For example, we can see how many utilities responded to the survey, that most of
+#the pipes between the watermain and shut off are owned by a public water system or municipality
+#while most of the pipes between the shut off and the house are owned by the resident, and that
+#most of the locations of pipes containg lead are estimates instead of records but utilites
+#still generally have high confidence in those estimates.
+    #note: for ownership: P - Public Water System; M - Muninicipality, R - Resident, U - Unknown
+    #note 2: there is some data clean up to do before we use these for analysis; for example
+    # there is one confidence level of 16 despite it being a 1-10 scale. Also, there are
+    #a variety of ways of reporting that some information is based on estimates while some is based
+    #on records. Since analyzing this further is beyond the scope of this project, these 
+    #adjustments are not made here
 
 #%%
 
-#lsl = lsl['pct_lsl'].to_replace('unknown')
 lsl['pct_lsl_calc'] = (100*lsl['tot_num_sl_w_lead']/lsl['tot_num_serv_connects']).round(2)
-#used these because they are from the same data set (Indiana survey, not EPA survey); also these were integers
-#did this because reported percent is a string and I didn't want to deal with it 
-    #(some numbers, some strings, even the numbers are strings because they include % (fix this in the excel sheet?))
-#reported and calculated percents similar
-#get percent of pipes that are lead
-#check variation in reporting number of pipes from EPA vs Indiana survey
+#used the values I did to calculate the percent of service lines that contain lead
+#because they are from the same data set (Indiana survey, not EPA survey); also these were integers
+#did this because reported percent is a string
+#reported and calculated percents similar; discrepancies are probably due to different numbers between
+#the different data sets used
+
 print(lsl['pct_lsl_calc'])
 
 #%%
 
-owner_agg_watermain = lsl['lead_btwn_watermain_shutoff'].groupby(lsl['owner_btwn_watermain_shutoff']).sum()#this did work but now it's funky, not sure what's up
+owner_agg_watermain = lsl['lead_btwn_watermain_shutoff'].groupby(lsl['owner_btwn_watermain_shutoff']).sum()
 owner_agg_house = lsl['lead_btwn_shutoff_house'].groupby(lsl['owner_btwn_shutoff_house']).sum()
 
+print('The number of pipes owned by Muninicipalites, Residents,and Public Water Systems between the watermain and the water shut off is:')
+print(owner_agg_watermain)
 
-lsl.to_csv('lsl.csv')
+print('The number of pipes owned by Muninicipalites, Residents,and Public Water Systems between the water shut off and the house is:')
+print(owner_agg_house)
+
+lsl.to_csv('lsl.csv')#creats a csv the entire dataframe
 
 #%%
 
@@ -100,13 +110,7 @@ response = lsl.groupby(lsl['respondent'])#now what can I do with this?
 yes = 449 #figure out how to do this in a way that is not 
 #response = lsl['respondent'].query('respondent == "Yes"')
 pct_response = 100 * yes/lsl['respondent'].count()
-print('The percentage of untilities that responded:',pct_response.round(2))
-
-
-by_response = lsl['tot_num_serv_connects_sdwis'].groupby(lsl['respondent']).sum()
-#total = lsl['tot_num_serv_connects_sdwis'].sum() #TypeError: can only concatenate str (not "int") to str
-num_connections = by_response['Yes'] #/ (by_response['Yes']+by_response['No'])#number too big?
-#drop SDWIS PWS ID, better done in merge
+print('The percentage of utilities that responded:',pct_response.round(2))
 
 
 #%%
@@ -115,8 +119,4 @@ lsl_layer = lsl[['lat','long','tot_num_serv_connects_sdwis','tot_num_serv_connec
                  'tot_num_sl_w_lead','no_lead_serv_connects','unk_mat_serv_connects',
                  'pct_lsl_calc']]
 lsl_layer.to_csv('lsl_layer.csv')
-
-
-
-#next step: response for rate for utilities vs response as % of total number of service connections
-#maybe also get % of types of ownership, % of 
+#writes a csv file with only the data used in the geographic analysis
