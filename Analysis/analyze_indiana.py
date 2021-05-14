@@ -4,7 +4,8 @@ Created on Thu May  6 11:43:37 2021
 
 @author: Elizabeth
 """
-
+#This script examines some aspects of the Indiana survey data and simplifies the
+#lsl.csv file for further 
 import pandas as pd
 
 lsl = pd.read_csv('lead_service_lines.csv')
