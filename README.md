@@ -20,7 +20,7 @@ This project also uses data downloaded from the census API.
 
 Outputs:
 
-File structure/Order:
+File Order:
 1 merge.py; outputs: lead_service_lines.csv (.csv file of the merged survey data)
 2 analyze_indiana.py; inputs: lead_service_lines.csv; outputs: lsl.csv, lsl_layer.csv
 3 census_data.py; inputs: none; outputs: 
@@ -42,18 +42,24 @@ File structure/Order:
         set tl_2017_us_county layer styling to the value 'med_income' using pretty breaks
             this map exported as 'med_income_pct_lead_sl.png' shows the median income and the percent of service
                 lines that contain lead
-5 analyze_counties.py; inputs: lsl_county.csv, census_data.csv
+5 analyze_counties.py; inputs: lsl_county.csv, census_data.csv; output: several scatter plots
+    showing the relationship between the number of pipes containing lead per county, the percent
+    of pipes containing lead per county, and the number of pipes containing lead per capita (see script
+    for more information)
+
+File organization:
+    Analysis: contains all scripts and .csv files
+    downloaded_data: contains all of the data downloaded for the project except for data collected through
+        the census API
+    Charts: contains all maps and scatterplots
+    QGIS: contains all geographic information from QGIS analysis and QGIS project
 
 Results:
-The number of lead pipes in a county correlates with the level poverty in the county
-and the relationship is likely not linear (take that into account if running a
-regression)
+    The number of lead pipes in a county, the percent of pipes containing lead, and the 
+    number of lead pipes per capita appear to correlate with the level poverty in the county
 
 Further analysis:
 
-More granular data (challenge, utilities given as latitude and longitude make it
-difficult to determine the extent )
+    Use more granular data to see if correlation holds (challenge, utilities given as latitude and longitude which makes it
+        difficult to determine the extent of the water system or how many people each utility serves)
 
-ownership of pipes
-
-confidence in record or estimate
