@@ -28,6 +28,21 @@ File structure/Order:
     outputs: 
     To conduct QGIS analysis: import all files; filter tl_2017_us_county so that only
         counties in Indiana appear (FIPS code: 18)
+        join census_data to tl_2017_us_county on 'GEOID' (use custom name and shorten census_data_ to census_)
+        Join lsl_layer to tl_2017_us_county and save new layer as lsl_county
+        export lsl_county as csv file of same name
+        set tl_2017_us_county layer styling to graduated with a value of census_pov_rate using natural breaks
+        set lsl_layer styling to graduated with a value of pct_lsl_calc using natural breaks
+            this image was exported as 'pov_rate_pct_lead_sl.png'
+        set add pie charts using attributes 'tot_num_sl_w_lead' colored gray, 'no_lead_serv_connects' colored green,
+            and 'unk_mat_serv_connects' colored orange
+                this map exported as 'pov_rate_pie_chart.png' shows the poverty rate of each county
+                    and the percentage of service lines reported as containing lead, no lead, or unknown
+        remove pie charts
+        set tl_2017_us_county layer styling to the value 'med_income' using pretty breaks
+            this map exported as 'med_income_pct_lead_sl.png' shows the median income and the percent of service
+                lines that contain lead
+5 analyze_counties.py; inputs: lsl_county.csv, census_data.csv
 
 Results:
 The number of lead pipes in a county correlates with the level poverty in the county

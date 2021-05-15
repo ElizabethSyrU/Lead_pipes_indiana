@@ -8,27 +8,27 @@ Created on Tue May 11 20:19:38 2021
 import pandas as pd
 import matplotlib.pyplot as plt
 
-pipes_by_county = pd.read_csv('pipes_by_county.csv')
+pipes_by_county = pd.read_csv('lsl_county.csv')
 
-pipes_by_county = pipes_by_county[['NAMELSAD','GEOID','stats_tot_pop','stats_med_income',
-                                   'stats_pov_stat_pop','stats_below_pov_line_prev_yr',
-                                   'stats_pov_rate','tot_num_serv_connects_sdwis',
+pipes_by_county = pipes_by_county[['NAMELSAD','GEOID','census_med_income','ALAND',
+                                   'census_pov_stat_pop','census_below_pov_line_prev_yr',
+                                   'census_pov_rate','tot_num_serv_connects_sdwis',
                                    'tot_num_serv_connects','tot_num_sl_w_lead',
                                    'no_lead_serv_connects','unk_mat_serv_connects']]
+                                    #selects only columns we are going to use
 
 #%%
 
 num_pipes_by_county = pipes_by_county[['tot_num_serv_connects','tot_num_sl_w_lead','unk_mat_serv_connects']].groupby(pipes_by_county['GEOID']).sum()
 #gets the number of pipes by county
-num_pipes_by_county['pct_lead'] = 100*pipes_by_county['tot_num_sl_w_lead']/pipes_by_county['tot_num_serv_connects']
-#this isn't working, only returns nan, why?
-
-#merge = num_pipes_by_county.merge(pipes_by_county,how='left',on='GEOID',indicator=True)
+num_pipes_by_county['pct_lead'] = (num_pipes_by_county['tot_num_sl_w_lead']/num_pipes_by_county['tot_num_serv_connects'])*100
+#calculates the percent of service lines that contain lead by county
 
 #%%
 
 census = pd.read_csv('census_data.csv')
 merge = num_pipes_by_county.merge(census,on='GEOID',indicator=True)
+#merges the census data onto the number of pipes by county dataframe
 
 #%%
 
