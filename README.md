@@ -24,7 +24,10 @@ File structure/Order:
 1 merge.py; outputs: lead_service_lines.csv (.csv file of the merged survey data)
 2 analyze_indiana.py; inputs: lead_service_lines.csv; outputs: lsl.csv, lsl_layer.csv
 3 census_data.py; inputs: none; outputs: 
-4 trim_tl.py; inputs: 'tl_2017_us_county.zip'
+4 QGIS analysis: inputs: lsl_layer.csv, census_data.csv, tl_2017_us_county.zip;
+    outputs: 
+    To conduct QGIS analysis: import all files; filter tl_2017_us_county so that only
+        counties in Indiana appear (FIPS code: 18)
 
 Results:
 The number of lead pipes in a county correlates with the level poverty in the county

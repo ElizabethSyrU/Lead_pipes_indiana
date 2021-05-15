@@ -31,14 +31,16 @@ counties = geopandas.read_file('zip://tl_2017_us_county.zip')
 counties = counties.query('STATEFP == "18"')
 #this selects the counties in Indiana; there sould now be 92 entries in the counties geodataframe
 
-#counties = counties['COUNTYFP','GEOID','NAME','INTPTLAT','INTPTLON','geometry']
+counties = counties[['COUNTYFP','GEOID','NAME','INTPTLAT','INTPTLON','geometry']]
 #figure out how to drop extra columns in geodataframe
 
-#census_data = geopandas.read_file('census_data.csv')
+#%%
 
-#counties = counties.merge(census_data,how='left',left_on='COUNTYFP',right_on='county',indicator=True,validate='1:1')
+census_data = geopandas.read_file('census_data.csv')
+
+counties = counties.merge(census_data,how='left',on='GEOID',indicator=True,validate='1:1')
 #appear to be having trouble merging dataframe onto geodataframe, do this in QGIS?
-#print(counties['_merge'].value_counts())
+print(counties['_merge'].value_counts())
 #all 92 values should be in the 'both' category
 #drop some columns
 
